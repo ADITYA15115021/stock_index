@@ -8,7 +8,7 @@ from app.schemas.indices import IndexReponse
 router = APIRouter()
 
 
-router.get("/indices", response_model=list[IndexReponse])
+@router.get("/indices", response_model=list[IndexReponse])
 def get_indices():
     try:
         with Session(engine) as db:
@@ -21,7 +21,7 @@ def get_indices():
 
 
 
-router.get("/indices/{indexId}")
+@router.get("/indices/{indexId}")
 def get_index(indexId:int):
     try:
         with Session(engine) as db:
