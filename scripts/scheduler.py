@@ -1,7 +1,6 @@
 import time
 from datetime import datetime, time as dt_time
 from zoneinfo import ZoneInfo
-
 from scripts.index_calculation import index_calculation
 
 

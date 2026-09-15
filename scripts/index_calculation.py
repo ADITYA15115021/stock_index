@@ -1,8 +1,8 @@
-from active import get_active_indices
-from constituents import get_constituents
-from  backend.scripts.market_data import get_market_data
-from divisor import get_divisor
-from add_index import add_index_value
+from scripts.active import get_active_indices
+from scripts.constituents import get_constituents
+from scripts.market_data import get_market_data
+from scripts.divisor import get_divisor
+from scripts.add_index import add_index_value
 from datetime import datetime
 
 def index_calculation():
