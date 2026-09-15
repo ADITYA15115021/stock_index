@@ -2,8 +2,8 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
 from app.db.database import engine
 from app.db.models import Indices, IndexValue, IndexDaily
-from schemas.indices import IndexReponse
 from datetime import datetime
+from app.schemas.indices import IndexReponse
 
 router = APIRouter()
 

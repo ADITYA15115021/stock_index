@@ -8,6 +8,3 @@ class IndexReponse(BaseModel):
     name: str
 
 
-# class IndexValueResponse(BaseModel):
-#     index_value: int
-#     timestamp: datetime      
