@@ -1,7 +1,7 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
 from app.db.database import engine
-from app.db.models import Indices, IndexValue, IndexDaily, IndexConstituent
+from app.db.models import Indices, IndexValue, IndexDaily, IndexConstituent,Security, MarketData
 from datetime import datetime
 from app.schemas.indices import IndexReponse
 
@@ -109,6 +109,7 @@ async def index_live(websocket: WebSocket, indexId: int):
         print(f"Connected clients: {len(connected_clients.get(indexId, set()))}")                  
 
 
+
 @router.get("/indices/{indexId}/constituents")
 def get_index_constituents(indexId: int):
     try:
@@ -117,15 +118,38 @@ def get_index_constituents(indexId: int):
                 IndexConstituent.index_id == indexId
             ).all()
 
-            return [
-                {
-                    "security_id": constituent.security_id,
-                    "symbol": constituent.security.symbol,
-                    "company_name": constituent.security.company_name,
+            result = []
+
+            for constituent in constituents:
+                security = db.query(Security).filter(
+                    Security.id == constituent.security_id
+                ).first()
+
+                if security is None:
+                    continue
+
+                market_data = db.query(MarketData).filter(
+                    MarketData.security_id == security.id
+                ).order_by(
+                    MarketData.timestamp.desc()
+                ).first()
+
+                result.append({
+                    "security_id": security.id,
+                    "symbol": security.symbol,
+                    "name": security.name,
+                    "market_cap": (
+                        market_data.total_market_cap
+                        if market_data else None
+                    ),
+                    "free_float_market_cap": (
+                        market_data.free_float_market_cap
+                        if market_data else None
+                    ),
                     "weight": constituent.weight
-                }
-                for constituent in constituents
-            ]
+                })
+
+            return result
 
     except Exception as e:
         print(
