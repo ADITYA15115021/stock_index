@@ -22,22 +22,43 @@ def get_indices():
 
 
 @router.get("/indices/{indexId}")
-def get_index(indexId:int):
+def get_index(indexId: int):
     try:
         with Session(engine) as db:
             index = db.query(IndexValue).filter(
-                IndexValue.index_id == indexId).order_by(
-                    IndexValue.timestamp.desc()
-                ).first()  
+                IndexValue.index_id == indexId
+            ).order_by(
+                IndexValue.timestamp.desc()
+            ).first()
+
+            if index is None:
+                return {"error": "Index value not found"}
 
             daily = db.query(IndexDaily).filter(
-                IndexDaily.index_id == indexId).order_by(IndexDaily.date.desc()).first()
+                IndexDaily.index_id == indexId
+            ).order_by(
+                IndexDaily.date.desc()
+            ).first()
+
+            if daily is None:
+                return {
+                    "index_value": index.index_value,
+                    "timestamp": index.timestamp,
+                    "open": None,
+                    "previous_close": None,
+                    "high": None,
+                    "low": None,
+                    "change": None,
+                    "change_percent": None
+                }
 
             previous_daily = db.query(IndexDaily).filter(
-                IndexDaily.index_id == indexId, IndexDaily.date < daily.date
-                ).order_by(IndexDaily.date.desc() ).first()
+                IndexDaily.index_id == indexId,
+                IndexDaily.date < daily.date
+            ).order_by(
+                IndexDaily.date.desc()
+            ).first()
 
-              
             return {
                 "index_value": index.index_value,
                 "timestamp": index.timestamp,
@@ -46,12 +67,17 @@ def get_index(indexId:int):
                 "high": daily.high,
                 "low": daily.low,
                 "change": daily.close - previous_daily.close,
-                "change_percent": ((daily.close - previous_daily.close) / previous_daily.close) * 100
+                "change_percent": (
+                    (daily.close - previous_daily.close)
+                    / previous_daily.close
+                ) * 100
             }
 
     except Exception as e:
-        print(f"")  
-
+        print(
+            f"[GET_INDEX] Failed for index_id={indexId}: {e}",
+            flush=True
+        )
 
 
 
