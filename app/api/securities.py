@@ -30,7 +30,7 @@ def get_security(securityId: int):
                 return {
                     "security_id": security.id,
                     "symbol": security.symbol,
-                    "company_name": security.company_name,
+                    "company_name": security.name,
                     "exchange": security.exchange,
                     "series": security.series,
                     "market_data": None
@@ -39,7 +39,7 @@ def get_security(securityId: int):
             return {
                 "security_id": security.id,
                 "symbol": security.symbol,
-                "company_name": security.company_name,
+                "company_name": security.name,
                 "exchange": security.exchange,
                 "series": security.series,
                 "last_price": market_data.last_price,
