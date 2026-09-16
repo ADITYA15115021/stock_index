@@ -30,7 +30,7 @@ def get_security(securityId: int):
                 return {
                     "security_id": security.id,
                     "symbol": security.symbol,
-                    "company_name": security.name,
+                    "name": security.name,
                     "exchange": security.exchange,
                     "series": security.series,
                     "market_data": None
