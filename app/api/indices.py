@@ -1,7 +1,7 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
 from app.db.database import engine
-from app.db.models import Indices, IndexValue, IndexDaily
+from app.db.models import Indices, IndexValue, IndexDaily, IndexConstituent
 from datetime import datetime
 from app.schemas.indices import IndexReponse
 
@@ -108,3 +108,30 @@ async def index_live(websocket: WebSocket, indexId: int):
         print(f"Client disconnected from index {indexId}")
         print(f"Connected clients: {len(connected_clients.get(indexId, set()))}")                  
 
+
+@router.get("/indices/{indexId}/constituents")
+def get_index_constituents(indexId: int):
+    try:
+        with Session(engine) as db:
+            constituents = db.query(IndexConstituent).filter(
+                IndexConstituent.index_id == indexId
+            ).all()
+
+            return [
+                {
+                    "security_id": constituent.security_id,
+                    "symbol": constituent.security.symbol,
+                    "company_name": constituent.security.company_name,
+                    "weight": constituent.weight
+                }
+                for constituent in constituents
+            ]
+
+    except Exception as e:
+        print(
+            f"[GET_CONSTITUENTS] Failed for index_id={indexId}: {e}",
+            flush=True
+        )
+        return {
+            "error": "Failed to retrieve index constituents"
+        }
