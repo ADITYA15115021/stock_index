@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
-
+from zoneinfo import ZoneInfo
 from app.db.models import IndexValue
 from app.db.database import engine
 
@@ -10,7 +10,7 @@ def add_index_value(index, index_value, total_ffmc, divisor):
         with Session(engine) as db:
             data = IndexValue(
                 index_id=index.id,
-                timestamp=datetime.now(),
+                timestamp=datetime.now(ZoneInfo("Asia/Kolkata")),
                 index_value=index_value,
                 total_free_float_market_cap=total_ffmc,
                 divisor=divisor

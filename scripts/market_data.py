@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from sqlalchemy.orm import Session
 
 from app.db.database import engine
@@ -34,6 +35,7 @@ def get_market_data(security_id):
 
             db.add(data)
             db.commit()
+            db.refresh(data)
 
             return data
 
@@ -88,7 +90,7 @@ def get_data(security):
 
         market_data = MarketData(
             security_id=security.id,
-            timestamp=datetime.now(),
+            timestamp=datetime.now(ZoneInfo("Asia/Kolkata")),
             last_price=trade_info["lastPrice"],
             total_market_cap=trade_info["totalMarketCap"] / 10_000_000,
             free_float_market_cap=trade_info["ffmc"] / 10_000_000,

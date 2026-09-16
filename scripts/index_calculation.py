@@ -36,6 +36,12 @@ def index_calculation():
                     )
                     break
 
+                print(
+                    f"[INDEX_CALCULATION] Market data collected "
+                    f"for security_id={security.security_id}",
+                    flush=True
+                )
+
                 total_ffmc += data.free_float_market_cap
 
             else:
